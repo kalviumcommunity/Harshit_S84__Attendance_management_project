@@ -9,6 +9,14 @@ public class Course {
         this.courseId = nextCourseIdCounter++;
         this.name = name;
     }
+
+    public int getCourseId() {
+        return courseId;
+    }
+    public String getCourseName() {
+        return name;
+    }
+
 	public void displayDetails() {
 		System.out.println("Course ID: " + this.courseId + ", Name: " + this.name);
 	}
