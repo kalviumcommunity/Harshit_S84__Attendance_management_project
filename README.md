@@ -26,3 +26,19 @@ adding this line for pull request
 1. Navigate to the project root directory.
 2. Compile: `javac src/com/school/Student.java src/com/school/Course.java src/com/school/Main.java` (or `javac src/com/school/*.java`)
 3. Run: `java -cp src com.school.Main`
+
+## Part 7: Polymorphic Behaviour in Attendance and Displaying Reports
+- Modified `AttendanceRecord` to hold `Student` and `Course` objects instead of just their IDs, enhancing its object-oriented nature and how records are displayed. The `toDataString()` method still uses IDs for simpler file storage.
+- Created a `displaySchoolDirectory(List<Person> people)` method in `Main.java` to demonstrate polymorphism. This method iterates through a list of `Person` objects (containing `Student`, `Teacher`, `Staff` instances) and calls `person.displayDetails()`. The correct overridden method for each specific object type is executed at runtime.
+- Populated a `List<Person>` in `main` and used it with `displaySchoolDirectory`.
+- Updated `Main.java` to use `instanceof` and casting when preparing the list of students for saving, as `Person` itself does not implement `Storable`.
+- Demonstrated richer `AttendanceLog` display that uses data from `Student` and `Course` objects.
+
+### How to Run
+1. Navigate to the project root directory.
+2. Compile: `javac src/com/school/*.java`
+3. Run: `java -cp src com.school.Main`
+
+### Notes / Submission
+- The program prints a "School Directory" section (showing polymorphic `displayDetails()` output) and an "Attendance Log" with richer messages.
+- Files `students.txt`, `courses.txt`, and `attendance_log.txt` are written to the project root when `FileStorageService.saveData` is called.
