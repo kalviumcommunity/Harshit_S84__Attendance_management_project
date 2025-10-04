@@ -1,29 +1,29 @@
 package com.school;
 
 public class AttendanceRecord implements Storable {
-	private int studentId;
-	private int courseId;
+	private Student student; // Changed from studentId to Student object
+	private Course course;   // Changed from courseId to Course object
 	private String status; // e.g., "Present", "Absent"
 
-	public AttendanceRecord(int studentId, int courseId, String status) {
-		this.studentId = studentId;
-		this.courseId = courseId;
+	public AttendanceRecord(Student student, Course course, String status) {
+		this.student = student;
+		this.course = course;
 		// Basic validation for status
 		if ("Present".equalsIgnoreCase(status) || "Absent".equalsIgnoreCase(status)) {
 			this.status = status;
 		} else {
 			this.status = "Invalid"; // Default for invalid input
-			System.out.println("Warning: Invalid attendance status provided. Set to 'Invalid'.");
+			System.out.println("Warning: Invalid attendance status provided ('" + status + "'). Set to 'Invalid'.");
 		}
 	}
 
 	// Getters
-	public int getStudentId() {
-		return studentId;
+	public Student getStudent() {
+		return student;
 	}
 
-	public int getCourseId() {
-		return courseId;
+	public Course getCourse() {
+		return course;
 	}
 
 	public String getStatus() {
@@ -31,13 +31,15 @@ public class AttendanceRecord implements Storable {
 	}
 
 	public void displayRecord() {
-		System.out.println("Attendance: Student ID " + studentId +
-				" in Course ID C" + courseId + " - Status: " + status);
+		// Use object data for a richer display
+		System.out.println("Attendance: Student " + student.getName() + " (ID: " + student.getId() + ")" +
+						" in Course " + course.getCourseName() + " (ID: C" + course.getCourseId() + ")" +
+						" - Status: " + status);
 	}
 
 	@Override
 	public String toDataString() {
-		// Format: studentId,courseId,status
-		return studentId + "," + courseId + "," + status;
+		// Format: studentId,courseId,status - keep IDs for file storage simplicity
+		return student.getId() + "," + course.getCourseId() + "," + status;
 	}
 }
