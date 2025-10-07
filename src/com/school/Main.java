@@ -45,25 +45,36 @@ public class Main {
 		for (Course c : courses)
 			c.displayDetails();
 
-		// --- Attendance Recording (Using Student and Course objects) ---
-		List<AttendanceRecord> attendanceLog = new ArrayList<>();
-		attendanceLog.add(new AttendanceRecord(student1, course1, "Present"));
-		attendanceLog.add(new AttendanceRecord(student2, course1, "Absent"));
-		attendanceLog.add(new AttendanceRecord(student1, course2, "Daydreaming")); // Invalid status
-
-		System.out.println("\n\n--- Attendance Log ---");
-		if (attendanceLog.isEmpty()) {
-			System.out.println("No attendance records yet.");
-		} else {
-			for (AttendanceRecord ar : attendanceLog) {
-				ar.displayRecord();
-			}
-		}
-
-		// --- Saving Data (filter students from schoolPeople) ---
-		System.out.println("\n\n--- Saving Data to Files ---");
+		// --- Setup services for Part 8: AttendanceService & FileStorageService ---
 		FileStorageService storageService = new FileStorageService();
+		AttendanceService attendanceService = new AttendanceService(storageService);
 
+		// Build master lists to support ID-based lookups in overloaded methods
+		List<Student> allStudents = new ArrayList<>();
+		allStudents.add(student1);
+		allStudents.add(student2);
+		// If you have more students add them here
+
+		List<Course> allCourses = new ArrayList<>();
+		allCourses.add(course1);
+		allCourses.add(course2);
+
+		System.out.println("\n\n--- Marking Attendance (Using overloaded methods) ---");
+		// 1) Object-based marking
+		attendanceService.markAttendance(student1, course1, "Present");
+		attendanceService.markAttendance(student2, course1, "Absent");
+
+		// 2) ID-based marking (uses lookup helper inside AttendanceService)
+		attendanceService.markAttendance(student1.getId(), course2.getCourseId(), "Present", allStudents, allCourses);
+		attendanceService.markAttendance(student2.getId(), course1.getCourseId(), "Daydreaming", allStudents, allCourses); // Invalid status -> handled by AttendanceRecord
+
+		System.out.println("\n\n--- Querying Attendance (Overloaded display methods) ---");
+		attendanceService.displayAttendanceLog(); // all records
+		attendanceService.displayAttendanceLog(student1); // filter by student
+		attendanceService.displayAttendanceLog(course1); // filter by course
+
+		System.out.println("\n\n--- Saving Data to Files ---");
+		// Save only students from the schoolPeople list (filter using instanceof)
 		List<Student> studentsToSave = new ArrayList<>();
 		for (Person p : schoolPeople) {
 			if (p instanceof Student) {
@@ -76,9 +87,11 @@ public class Main {
 			System.out.println("No student data to save from school directory.");
 		}
 
+		// Save courses
 		storageService.saveData(courses, "courses.txt");
-		storageService.saveData(attendanceLog, "attendance_log.txt");
+		// Save attendance log via the service
+		attendanceService.saveAttendanceData();
 
-		System.out.println("\nSession 7: Polymorphic Behaviour Demonstrated Complete.");
+		System.out.println("\nSession 8: Overloaded Commands Demonstrated Complete.");
 	}
 }
