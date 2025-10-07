@@ -42,3 +42,25 @@ adding this line for pull request
 ### Notes / Submission
 - The program prints a "School Directory" section (showing polymorphic `displayDetails()` output) and an "Attendance Log" with richer messages.
 - Files `students.txt`, `courses.txt`, and `attendance_log.txt` are written to the project root when `FileStorageService.saveData` is called.
+
+## Part 8: Overloaded Commands: Multiple Ways to Mark and Query Attendance
+- Added `AttendanceService.java` to encapsulate attendance logic and manage `AttendanceRecord` objects.
+- Implemented overloaded `markAttendance` methods:
+  - `markAttendance(Student student, Course course, String status)` — object-based.
+  - `markAttendance(int studentId, int courseId, String status, List<Student> allStudents, List<Course> allCourses)` — ID-based, uses helper lookups.
+- Implemented overloaded `displayAttendanceLog` methods:
+  - `displayAttendanceLog()` — shows all records.
+  - `displayAttendanceLog(Student student)` — filters records for a student.
+  - `displayAttendanceLog(Course course)` — filters records for a course.
+- `AttendanceService` uses `FileStorageService` to save the attendance log to `attendance_log.txt`.
+- Demonstrated overloaded methods in `Main.java` with example calls.
+
+### How to Run (Part 8)
+1. Navigate to the project root directory.
+2. Compile all sources: `javac src/com/school/*.java`
+3. Run: `java -cp src com.school.Main`
+4. Verify `attendance_log.txt` contains the saved attendance entries.
+
+### Notes
+- The project uses simple console output to demonstrate polymorphism and method overloading.
+- When saving, storable objects write compact ID-based strings for easy re-loading or manual inspection.
