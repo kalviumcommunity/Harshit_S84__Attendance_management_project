@@ -19,43 +19,55 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        System.out.println("--- School System (SRP Demo) ---");
+        System.out.println("--- School System (Capacity Management & SOLID Reflection) ---");
 
-        // --- Setup Services ---
         FileStorageService storageService = new FileStorageService();
         RegistrationService registrationService = new RegistrationService(storageService);
-        // AttendanceService now depends on RegistrationService
         AttendanceService attendanceService = new AttendanceService(storageService, registrationService);
 
-        // --- Registering Entities via RegistrationService ---
-        System.out.println("\n--- Registering People and Courses ---");
+        System.out.println("\n--- Registering People ---");
         Student student1 = registrationService.registerStudent("Alice Wonderland", "Grade 10");
         Student student2 = registrationService.registerStudent("Bob The Builder", "Grade 9");
-        registrationService.registerTeacher("Dr. Emily Carter", "Physics");
-        registrationService.registerStaff("Mr. John Davis", "Librarian");
+        Student student3 = registrationService.registerStudent("Charlie Chaplin", "Grade 10"); // For capacity test
 
-        Course course1 = registrationService.createCourse("Intro to Programming");
-        Course course2 = registrationService.createCourse("Data Structures");
+        System.out.println("\n--- Creating Courses with Capacity ---");
+        Course courseCS101 = registrationService.createCourse("Intro to Programming", 2); // Capacity of 2
+        Course courseMA202 = registrationService.createCourse("Linear Algebra", 30);
 
-        // Display directory using data from RegistrationService
-        displaySchoolDirectory(registrationService);
+        System.out.println("\n--- Enrolling Students in Courses ---");
+        registrationService.enrollStudentInCourse(student1, courseCS101);
+        registrationService.enrollStudentInCourse(student2, courseCS101);
+        registrationService.enrollStudentInCourse(student3, courseCS101); // This one should fail or show full
+
+        registrationService.enrollStudentInCourse(student1, courseMA202); // Should succeed
+
+        System.out.println("\n--- Updated Course Details ---");
+        courseCS101.displayDetails();
+        courseMA202.displayDetails();
 
         System.out.println("\n\n--- Marking Attendance ---");
-        // Mark attendance using Student and Course objects
-        attendanceService.markAttendance(student1, course1, "Present");
-        // Mark attendance using studentId and courseId (lookup via RegistrationService)
-        attendanceService.markAttendance(student2.getId(), course1.getCourseId(), "Absent");
-        attendanceService.markAttendance(student1.getId(), course2.getCourseId(), "Tardy"); // Invalid
+        // Student 1 in CS101
+        if (courseCS101.getEnrolledStudents().contains(student1)) { // Check enrollment before marking
+            attendanceService.markAttendance(student1, courseCS101, "Present");
+        } else {
+            System.out.println("Cannot mark attendance: " + student1.getName() + " not enrolled in " + courseCS101.getCourseName());
+        }
+        // Student 3 in CS101 (should not have been enrolled if capacity was 2)
+        if (courseCS101.getEnrolledStudents().contains(student3)) {
+            attendanceService.markAttendance(student3, courseCS101, "Absent");
+        } else {
+            System.out.println("Cannot mark attendance: " + student3.getName() + " not enrolled in " + courseCS101.getCourseName());
+        }
 
-        System.out.println("\n\n--- Querying Attendance ---");
-        attendanceService.displayAttendanceLog(student1); // Log for Alice
-        attendanceService.displayAttendanceLog();         // Full log
 
-        // --- Saving Data via Services ---
+        System.out.println("\n\n--- Attendance Log for CS101 ---");
+        attendanceService.displayAttendanceLog(courseCS101);
+
         System.out.println("\n\n--- Saving All Data ---");
-        registrationService.saveAllRegistrations();
+        registrationService.saveAllRegistrations(); // Will save courses with their capacity
         attendanceService.saveAttendanceData();
 
-        System.out.println("\nSession 9: SRP with Registration & Attendance Services Complete.");
+        System.out.println("\nSession 10: Capacity Management & SOLID Reflection Complete.");
+        System.out.println("Project Finished! Congratulations!");
     }
 }
