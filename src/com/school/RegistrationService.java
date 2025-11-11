@@ -46,11 +46,32 @@ public class RegistrationService {
         return staff;
     }
 
-    public Course createCourse(String courseName) {
-        Course course = new Course(courseName);
+    // Updated to accept capacity
+    public Course createCourse(String courseName, int capacity) {
+        Course course = new Course(courseName, capacity);
         this.courses.add(course);
-        System.out.println("Course created: " + courseName + " (ID: C" + course.getCourseId() + ")");
+        System.out.println("Course created: " + courseName + " (ID: C" + course.getCourseId() + ", Capacity: " + capacity + ")");
         return course;
+    }
+
+    public boolean enrollStudentInCourse(Student student, Course course) {
+        if (student == null || course == null) {
+            System.out.println("Error: Student or Course cannot be null for enrollment.");
+            return false;
+        }
+        // Check if student is already enrolled (optional, good practice)
+        if (course.getEnrolledStudents().contains(student)) {
+            System.out.println("Info: Student " + student.getName() + " is already enrolled in " + course.getCourseName());
+            return true; // Or false if re-enrollment is an error
+        }
+
+        if (course.addStudent(student)) {
+            System.out.println("Student " + student.getName() + " successfully enrolled in " + course.getCourseName());
+            return true;
+        } else {
+            System.out.println("Failed to enroll student " + student.getName() + " in " + course.getCourseName() + ". Course is full.");
+            return false;
+        }
     }
 
     public List<Student> getStudents() { return students; }
